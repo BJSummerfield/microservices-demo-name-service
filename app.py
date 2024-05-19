@@ -13,7 +13,11 @@ from models import User
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
-    new_user = User(username=data['username'])
+    user_id = data.get('id', None)
+    if user_id is None:
+        return jsonify({'error': 'User ID is required'}), 400
+
+    new_user = User(id=user_id, username=data['username'])
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'id': new_user.id, 'username': new_user.username}), 201
