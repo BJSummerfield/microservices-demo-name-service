@@ -22,7 +22,7 @@ def create_user():
     db.session.commit()
     return jsonify({'id': new_user.id, 'username': new_user.username}), 201
 
-@app.route('/users/<int:id>', methods=['GET'])
+@app.route('/users/<string:id>', methods=['GET'])
 def get_user(id):
     user = User.query.get_or_404(id)
     return jsonify({'id': user.id, 'username': user.username})
@@ -32,7 +32,7 @@ def get_users():
     users = User.query.all()
     return jsonify([{'id': user.id, 'username': user.username} for user in users])
 
-@app.route('/users/<int:id>', methods=['PUT'])
+@app.route('/users/<string:id>', methods=['PUT'])
 def update_user(id):
     data = request.get_json()
     user = User.query.get_or_404(id)
@@ -40,7 +40,7 @@ def update_user(id):
     db.session.commit()
     return jsonify({'id': user.id, 'username': user.username})
 
-@app.route('/users/<int:id>', methods=['DELETE'])
+@app.route('/users/<string:id>', methods=['DELETE'])
 def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
