@@ -9,11 +9,7 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p", "password"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   name-service:
     build: .
@@ -23,11 +19,6 @@ services:
       - mysql
     environment:
       DATABASE_URL: mysql+pymysql://root:password@mysql/users
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
 volumes:
   db_data:

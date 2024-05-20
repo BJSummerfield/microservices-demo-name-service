@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 
-DATABASE_URL = "mysql://root:password@mysql/users"
+DATABASE_URL = "mysql+pymysql://root:password@mysql/users"
 
 # Retry logic for database connection
 def get_engine():
