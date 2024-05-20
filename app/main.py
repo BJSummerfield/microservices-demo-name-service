@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, database
+import uuid
 
 app = FastAPI()
 
@@ -8,7 +9,7 @@ models.Base.metadata.create_all(bind=database.engine)
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
-    db_user = models.User(username=user.username)
+    db_user = models.User(id=str(user.id or uuid.uuid4()), username=user.username)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -44,3 +45,4 @@ def delete_user(user_id: str, db: Session = Depends(database.get_db)):
     db.delete(db_user)
     db.commit()
     return db_user
+
