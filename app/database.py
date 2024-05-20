@@ -1,9 +1,21 @@
+import time
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import OperationalError
 
-DATABASE_URL = "mysql://username:password@db/nameService"
+DATABASE_URL = "mysql://root:password@mysql/users"
 
-engine = create_engine(DATABASE_URL)
+# Retry logic for database connection
+def get_engine():
+    while True:
+        try:
+            engine = create_engine(DATABASE_URL)
+            engine.connect()
+            return engine
+        except OperationalError:
+            time.sleep(1)
+
+engine = get_engine()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
