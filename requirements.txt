@@ -1,5 +1,5 @@
-Flask
-Flask-SQLAlchemy
-pymysql
-Flask-Migrate
-gunicorn
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+mysqlclient
