@@ -1,25 +1,35 @@
 services:
-  web:
-    build: .
-    ports:
-      - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
-  db:
+  mysql:
     image: mysql:5.7
+    platform: linux/x86_64
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: nameService
-      MYSQL_USER: username
+      MYSQL_DATABASE: users
+      MYSQL_USER: root
       MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p", "password"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
+
+  name-service:
+    build: .
+    ports:
+      - "5000:8000"
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: mysql+pymysql://root:password@mysql/users
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   db_data:
