@@ -1,5 +1,5 @@
 services:
-  mysql:
+  microservices-demo-mysql:
     image: mysql:5.7
     platform: linux/x86_64
     environment:
@@ -11,15 +11,16 @@ services:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  name-service:
+  microservices-demo-name-service:
     build: .
     ports:
       - "8000:8000"
     depends_on:
-      - mysql
+      - microservices-demo-mysql
     environment:
-      DATABASE_URL: mysql+pymysql://root:password@mysql/users
+      DATABASE_URL: mysql+pymysql://root:password@microservices-demo-mysql/users
 
 volumes:
   db_data:
     driver: local
+
