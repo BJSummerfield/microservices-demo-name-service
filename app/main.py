@@ -1,7 +1,11 @@
+import logging
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, database
 import uuid
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -13,6 +17,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    logger.info(f"Created user {db_user.id}")
     return db_user
 
 @app.get("/users/", response_model=list[schemas.User])
@@ -45,4 +50,3 @@ def delete_user(user_id: str, db: Session = Depends(database.get_db)):
     db.delete(db_user)
     db.commit()
     return db_user
-
