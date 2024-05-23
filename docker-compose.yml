@@ -17,8 +17,21 @@ services:
       - "8000:8000"
     depends_on:
       - microservices-demo-name-mysql
+      - rabbitmq
     environment:
       DATABASE_URL: mysql+pymysql://root:password@microservices-demo-name-mysql:3306/names
+      RABBITMQ_URL: amqp://rabbitmq:5672/
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   db_data:

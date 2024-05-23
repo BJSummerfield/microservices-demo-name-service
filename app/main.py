@@ -1,12 +1,16 @@
 import logging
+import threading
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, database
+from .events import start_listeners
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+threading.Thread(target=start_listeners, daemon=True).start()
 
 models.Base.metadata.create_all(bind=database.engine)
 
