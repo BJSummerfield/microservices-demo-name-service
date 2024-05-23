@@ -8,8 +8,8 @@ class NameBase(BaseModel):
 class NameCreate(NameBase):
     id: uuid.UUID  
 
-class NameUpdate(NameBase):
-    pass
+class NameUpdate(BaseModel):
+    name: Optional[str] = None
 
 class Name(NameBase):
     id: uuid.UUID  

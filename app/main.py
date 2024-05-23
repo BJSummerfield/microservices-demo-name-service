@@ -39,13 +39,14 @@ def read_name(name_id: str, db: Session = Depends(database.get_db)):
     return name
 
 @app.put("/names/{name_id}", response_model=schemas.Name)
-def update_name(name_id: str, name: schemas.NameCreate, db: Session = Depends(database.get_db)):
+def update_name(name_id: str, name: schemas.NameUpdate, db: Session = Depends(database.get_db)):
     db_name = db.query(models.Name).filter(models.Name.id == name_id).first()
     if db_name is None:
         raise HTTPException(status_code=404, detail="name not found")
-    db_name.name = name.name
-    db.commit()
-    db.refresh(db_name)
+    if name.name is not None:
+        db_name.name = name.name
+        db.commit()
+        db.refresh(db_name)
     return db_name
 
 @app.delete("/names/{name_id}", response_model=schemas.Name)
