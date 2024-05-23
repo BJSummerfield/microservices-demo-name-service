@@ -1,28 +1,28 @@
 from sqlalchemy.orm import Session
 import models, schemas
 
-def get_user(db: Session, user_id: str):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+def get_name(db: Session, name_id: str):
+    return db.query(models.Name).filter(models.Name.id == name_id).first()
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_names(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Name).offset(skip).limit(limit).all()
 
-def create_user(db: Session, user: schemas.UserCreate):
-    db_user = models.User(id=user.id, username=user.username)
-    db.add(db_user)
+def create_name(db: Session, name: schemas.NameCreate):
+    db_name = models.Name(id=name.id, name=name.name)
+    db.add(db_name)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_name)
+    return db_name
 
-def update_user(db: Session, user_id: str, user: schemas.UserUpdate):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    db_user.username = user.username
+def update_name(db: Session, name_id: str, name: schemas.NameUpdate):
+    db_name = db.query(models.Name).filter(models.Name.id == name_id).first()
+    db_name.name = name.name
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_name)
+    return db_name
 
-def delete_user(db: Session, user_id: str):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    db.delete(db_user)
+def delete_name(db: Session, name_id: str):
+    db_name = db.query(models.Name).filter(models.Name.id == name_id).first()
+    db.delete(db_name)
     db.commit()
-    return db_user
+    return db_name

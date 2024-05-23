@@ -2,7 +2,6 @@ import logging
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, database
-import uuid
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -11,42 +10,45 @@ app = FastAPI()
 
 models.Base.metadata.create_all(bind=database.engine)
 
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
-    db_user = models.User(id=str(user.id or uuid.uuid4()), username=user.username)
-    db.add(db_user)
+@app.post("/names/", response_model=schemas.Name)
+def create_name(name: schemas.NameCreate, db: Session = Depends(database.get_db)):
+    if not name.id:
+        raise HTTPException(status_code=422, detail="ID must be provided")
+
+    db_name = models.Name(id=str(name.id), name=name.name)
+    db.add(db_name)
     db.commit()
-    db.refresh(db_user)
-    logger.info(f"Created user {db_user.id}")
-    return db_user
+    db.refresh(db_name)
+    logger.info(f"Created name {db_name.id}")
+    return db_name
 
-@app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
-    users = db.query(models.User).offset(skip).limit(limit).all()
-    return users
+@app.get("/names/", response_model=list[schemas.Name])
+def read_names(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
+    names = db.query(models.Name).offset(skip).limit(limit).all()
+    return names
 
-@app.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: str, db: Session = Depends(database.get_db)):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+@app.get("/name/{name_id}", response_model=schemas.Name)
+def read_name(name_id: str, db: Session = Depends(database.get_db)):
+    name = db.query(models.Name).filter(models.Name.id == name_id).first()
+    if name is None:
+        raise HTTPException(status_code=404, detail="name not found")
+    return name
 
-@app.put("/users/{user_id}", response_model=schemas.User)
-def update_user(user_id: str, user: schemas.UserCreate, db: Session = Depends(database.get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    db_user.username = user.username
+@app.put("/names/{name_id}", response_model=schemas.Name)
+def update_name(name_id: str, name: schemas.NameCreate, db: Session = Depends(database.get_db)):
+    db_name = db.query(models.Name).filter(models.Name.id == name_id).first()
+    if db_name is None:
+        raise HTTPException(status_code=404, detail="name not found")
+    db_name.name = name.name
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_name)
+    return db_name
 
-@app.delete("/users/{user_id}", response_model=schemas.User)
-def delete_user(user_id: str, db: Session = Depends(database.get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    db.delete(db_user)
+@app.delete("/names/{name_id}", response_model=schemas.Name)
+def delete_name(name_id: str, db: Session = Depends(database.get_db)):
+    db_name = db.query(models.Name).filter(models.Name.id == name_id).first()
+    if db_name is None:
+        raise HTTPException(status_code=404, detail="name not found")
+    db.delete(db_name)
     db.commit()
-    return db_user
+    return db_name

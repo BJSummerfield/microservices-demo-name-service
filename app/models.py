@@ -4,9 +4,9 @@ import uuid
 
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = "users"
+class Name(Base):
+    __tablename__ = "names"
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True)
-    username = Column(String(255), index=True, nullable=False)
+    name = Column(String(255), index=True, nullable=True)
 
 

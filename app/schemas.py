@@ -2,13 +2,13 @@ from pydantic import BaseModel
 from typing import Optional
 import uuid
 
-class UserBase(BaseModel):
-    username: str
+class NameBase(BaseModel):
+    name: str
 
-class UserCreate(UserBase):
+class NameCreate(NameBase):
     id: Optional[uuid.UUID] = None
 
-class User(UserBase):
+class Name(NameBase):
     id: uuid.UUID
 
     class Config:

@@ -15,4 +15,4 @@ RUN chmod +x /code/wait-for-it.sh
 
 EXPOSE 8000
 
-CMD ["/code/wait-for-it.sh", "microservices-demo-mysql", "--", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/code/wait-for-it.sh", "microservices-demo-name-mysql", "--", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

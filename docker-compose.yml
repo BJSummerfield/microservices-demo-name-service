@@ -1,10 +1,10 @@
 services:
-  microservices-demo-mysql:
+  microservices-demo-name-mysql:
     image: mysql:5.7
     platform: linux/x86_64
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: users
+      MYSQL_DATABASE: names
     ports:
       - "3306:3306"
     volumes:
@@ -16,9 +16,9 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - microservices-demo-mysql
+      - microservices-demo-name-mysql
     environment:
-      DATABASE_URL: mysql+pymysql://root:password@microservices-demo-mysql/users
+      DATABASE_URL: mysql+pymysql://root:password@microservices-demo-name-mysql:3306/names
 
 volumes:
   db_data:
