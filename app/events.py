@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 def start_listeners():
     channel = setup_rabbitmq()
-    queue_result = channel.queue_declare('', exclusive=True)
+    queue_result = channel.queue_declare('nameQueue', exclusive=False)
     queue_name = queue_result.method.queue
 
     channel.queue_bind(exchange='user_events', queue=queue_name, routing_key='userManagement.userCreated')

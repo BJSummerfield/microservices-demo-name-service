@@ -4,6 +4,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, database
 from .events import start_listeners
+from .event_utils import publish_event
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -47,6 +48,8 @@ def update_name(name_id: str, name: schemas.NameUpdate, db: Session = Depends(da
         db_name.name = name.name
         db.commit()
         db.refresh(db_name)
+        publish_event('nameUpdated', {'id': str(db_name.id), 'name': db_name.name})
+        logger.info(f"Updated name {db_name.id} and published event")
     return db_name
 
 @app.delete("/names/{name_id}", response_model=schemas.Name)

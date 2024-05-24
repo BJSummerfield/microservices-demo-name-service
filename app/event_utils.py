@@ -14,19 +14,24 @@ def setup_rabbitmq():
     return channel
 
 def publish_event(event_type, data):
-    channel = setup_rabbitmq()
-    event = {
-        'timestamp': datetime.now().isoformat(),
-        'version': '1.0',
-        'serviceOrigin': 'NameService',
-        'traceId': str(uuid.uuid4()),
-        'eventType': event_type,
-        'environment': 'production',
-        'payload': data
-    }
-    channel.basic_publish(
-        exchange='user_events', 
-        routing_key=f'userManagement.{event_type}', 
-        body=json.dumps(event))
-    logging.info(f"Event published: {event_type} with data: {data}")
-    channel.close()
+    logging.info(f"Publishing event: {event_type} with data: {data}")
+    try:
+        channel = setup_rabbitmq()
+        event = {
+            'timestamp': datetime.now().isoformat(),
+            'version': '1.0',
+            'serviceOrigin': 'NameService',
+            'traceId': str(uuid.uuid4()),
+            'eventType': event_type,
+            'environment': 'production',
+            'payload': data
+        }
+        channel.basic_publish(
+            exchange='user_events', 
+            routing_key=f'userManagement.{event_type}', 
+            body=json.dumps(event))
+        channel.close()
+        logging.info(f"Successfully published event: {event_type} with data: {data}")
+    except Exception as e:
+        logging.error(f"Failed to publish event: {event_type} with error: {str(e)}")
+
