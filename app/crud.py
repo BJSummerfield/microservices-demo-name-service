@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from .models import Name
 from .schemas import NameCreate, NameUpdate
-from .event_utils import publish_event
 
 def get_name(db: Session, name_id: str):
     return db.query(Name).filter(Name.id == name_id).first()
@@ -19,7 +18,6 @@ def update_name(db: Session, name_id: str, name: NameUpdate):
         db_name.name = name.name
         db.commit()
         db.refresh(db_name)
-        publish_event('nameUpdated', {'id': str(db_name.id), 'name': db_name.name})
         return db_name
     return None
 
